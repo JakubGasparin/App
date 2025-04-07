@@ -1,9 +1,39 @@
+[project]
+name = "app"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "asyncpg>=0.30.0",
+    "beautifulsoup4>=4.13.3",
+    "dspy>=2.6.10",
+    "fastapi>=0.115.11",
+    "fastapi-cache2>=0.2.2",
+    "fs>=2.4.16",
+    "markdownify>=1.1.0",
+    "openai>=1.65.4",
+    "openpyxl>=3.1.5",
+    "pandas>=2.2.3",
+    "playwright>=1.50.0",
+    "pre-commit>=4.1.0",
+    "pydantic>=2.10.6",
+    "pydantic-extra-types>=2.10.2",
+    "pydantic-settings>=2.8.1",
+    "pyjwt>=2.10.1",
+    "pynacl>=1.5.0",
+    "redis>=5.2.1",
+    "ruff>=0.9.10",
+    "sqlalchemy>=2.0.38",
+    "uvicorn>=0.34.0",
+    "validators>=0.34.0",
+]
+
 [tool.black]
 line-length = 88
 target-version = ['py39']
 
 [tool.ruff]
-#https://beta.ruff.rs/docs/rules/
 lint.select = [
     "E",  # pycodestyle errors
     "W",  # pycodestyle warnings
@@ -14,13 +44,13 @@ lint.select = [
     "G",
     "SIM1",
     "PLE",
-    "N802", "N803", "N815", "N816","N806",
+    "N802", "N803", "N815", "N816", "N806",
     "ANN",
-    "UP",  # pyupgrade,
-    # "T201", # check if print statement exists
+    "UP",  # pyupgrade
 ]
+
 lint.ignore = [
-    "E501",  # line too long, handled by black
+    "E501",  # line too long, handled by Black
     "B008",  # do not perform function calls in argument defaults
     "C901",  # too complex
     "G004",
@@ -29,47 +59,19 @@ lint.ignore = [
     "B904"
 ]
 
-# Allow autofix for all enabled rules (when `--fix`) is provided.
 lint.fixable = ["A", "B", "C", "D", "E", "F", "G", "I", "N", "Q", "S", "T", "W", "ANN", "ARG", "BLE", "COM", "DJ", "DTZ", "EM", "ERA", "EXE", "FBT", "ICN", "INP", "ISC", "NPY", "PD", "PGH", "PIE", "PL", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "SIM", "SLF", "TCH", "TID", "TRY", "UP", "YTT"]
 lint.unfixable = []
 
-# Exclude a variety of commonly ignored directories.
 lint.exclude = [
-    ".bzr",
-    ".direnv",
-    ".eggs",
-    ".git",
-    ".git-rewrite",
-    ".hg",
-    ".mypy_cache",
-    ".nox",
-    ".pants.d",
-    ".pytype",
-    ".ruff_cache",
-    ".svn",
-    ".tox",
-    ".venv",
-    "__pypackages__",
-    "_build",
-    "buck-out",
-    "build",
-    "dist",
-    "node_modules",
-    "venv",
-    "models.py"
+    ".git", ".venv", "__pycache__", "node_modules", "build", "dist", "models.py"
 ]
 
-# Same as Black.
-line-length = 88
-
-# Allow unused variables when underscore-prefixed.
 lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
-# Assume Python 3.10.
+line-length = 88
 target-version = "py39"
 
 [tool.ruff.lint.mccabe]
-# Unlike Flake8, default to a complexity level of 10.
 max-complexity = 10
 
 [tool.ruff.lint.per-file-ignores]

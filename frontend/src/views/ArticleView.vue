@@ -1,167 +1,42 @@
 <template>
   <main>
-    <ProgressBar :active-page="3"></ProgressBar>
-    <div class="loading-container" v-show="articleStore.loading">
-      <LoadingSpinner></LoadingSpinner>
-      Generating article...
-    </div>
-    <div class="page-wrapper">
-      <div class="textarea-wrapper">
-        <h2 id="titleBox" class="title" v-show="!articleStore.loading">
-          {{ selectedTopic }}
-        </h2>
+    <section class="article-section">
+      <ProgressBar :currentStep="currentStep"></ProgressBar>
+      <div class="loading-container" v-show="articleStore.loading">
+        <LoadingSpinner></LoadingSpinner>
+        Generating article...
+      </div>
 
-        <div class="textarea-container" v-show="!articleStore.loading">
-          <div class="header-container">
-            <h3 class="header-container">Title</h3>
-            <p class="word-counter">Word count: {{ titleWordCount }}</p>
-          </div>
-          <div class="textarea-copy-wrapper">
-            <span
-              class="material-icons copy-icon"
-              @click="copyText('title-textarea')"
-              title="Copy text to clipboard"
-              >content_copy</span
-            >
-            <textarea
-              id="title-textarea"
-              v-model="title"
-              @input="autoResize"
-            ></textarea>
-          </div>
-        </div>
+      <div class="intro-box">
+        <div class="back-button" v-show="!articleStore.loading" @click="goBack"><div class="material-icons keyboard_backspace back-icon"></div>Back to topic selection</div>
+        <div class="time-to-read" v-show="!articleStore.loading">Time to read: <span class="bold">{{ timeToRead }}</span></div>
+      </div>
 
-        <!-- MOBILE - TITLE SUGGESTION - TEMPORARY -->
-        <div class="m-title-suggestion-wrapper" v-show="!articleStore.loading">
-          <div class="regenerate-wrapper" v-show="!articleStore.loading">
-            <h3 class="header-container" v-show="!articleStore.loading">
-              Title suggestions
-            </h3>
-            <AiContent></AiContent>
-            <button
-              class="material-icons regenerate-button"
-              title="Regenerate"
-              @click="regenTitleSuggestions"
-            >
-              autorenew
-            </button>
-          </div>
-
-          <button
-            v-for="(suggestion, index) in titleSuggestions"
-            :key="index"
-            class="title-btn"
-            @click="copyTitle(suggestion)"
-          >
-            {{ suggestion }}
-          </button>
-        </div>
-
-        <div class="textarea-container" v-show="!articleStore.loading">
-          <div class="header-container">
-            <div class="regenerate-wrapper">
-              <h3 class="header-container">Engaging text</h3>
-
-              <button
-                class="material-icons regenerate-button"
-                title="Regenerate"
-                @click="regenEngagingText"
-              >
-                autorenew
-              </button>
-            </div>
-            <p class="word-counter">Word count: {{ engagingTextWordCount }}</p>
-          </div>
-          <div class="textarea-copy-wrapper">
-            <span
-              class="material-icons copy-icon"
-              @click="copyText('engaging-textarea')"
-              title="Copy text to clipboard"
-              >content_copy</span
-            >
-            <textarea
-              id="engaging-textarea"
-              v-model="engagingText"
-              @input="autoResize"
-            ></textarea>
-          </div>
-        </div>
-
-        <div class="textarea-container" v-show="!articleStore.loading">
-          <div class="header-container">
-            <div class="regenerate-wrapper">
-              <h3 class="header-container">Perex</h3>
-
-              <button
-                class="material-icons regenerate-button"
-                title="Regenerate"
-                @click="regenPerex"
-              >
-                autorenew
-              </button>
-            </div>
-            <p class="word-counter">Word count: {{ perexWordCount }}</p>
-          </div>
-          <div class="textarea-copy-wrapper">
-            <span
-              class="material-icons copy-icon"
-              @click="copyText('perex-textarea')"
-              title="Copy text to clipboard"
-              >content_copy</span
-            >
-            <textarea
-              id="perex-textarea"
-              v-model="perex"
-              @input="autoResize"
-            ></textarea>
-          </div>
-        </div>
-
-        <div class="textarea-container" v-show="!articleStore.loading">
-          <div class="header-container">
-            <div class="regenerate-wrapper">
-              <h3 class="header-container">Body</h3>
-
-              <button
-                class="material-icons regenerate-button"
-                title="Regenerate"
-                @click="regenBody"
-              >
-                autorenew
-              </button>
-            </div>
-            <div class="word-count-time-to-read-wrapper">
-              <p class="time-to-read">Time to read: {{ timeToRead }}</p>
-              <p class="word-counter">Word count: {{ bodyWordCount }}</p>
-            </div>
-          </div>
-          <div class="textarea-copy-wrapper">
-            <span
-              class="material-icons copy-icon"
-              @click="copyText('body-textarea')"
-              title="Copy text to clipboard"
-              >content_copy</span
-            >
-            <textarea
-              id="body-textarea"
-              v-model="body"
-              @input="autoResize"
-            ></textarea>
-          </div>
-        </div>
-
-        <div class="tags-container" v-show="!articleStore.loading">
-          <div class="regenerate-wrapper">
-            <h3 class="header-container">Tags</h3>
-
-            <button
-              class="material-icons regenerate-button"
-              title="Regenerate"
-              @click="regenTags"
-            >
-              autorenew
-            </button>
-          </div>
+      <div class="textarea-container" v-show="!articleStore.loading">
+        <div class="topic-box">{{ selectedTopic }}</div>
+      </div>
+      <div class="textarea-container" v-show="!articleStore.loading">
+        <textarea
+          class="headline"
+          id="title-textarea"
+          v-model="title"
+          @input="autoResize"
+          spellcheck="false"
+          placeholder="Title is empty"
+        >
+Slovensko zaznamenalo historicky najvyšší rast obnoviteľných zdrojov energie</textarea
+        >
+      </div>
+      <div class="textarea-container" v-show="!articleStore.loading">
+        <ArticleBlock :text="engagingText" type="Engaging Text"></ArticleBlock>
+      </div>
+      <div class="textarea-container" v-show="!articleStore.loading">
+        <ArticleBlock :text="perex" type="Perex"></ArticleBlock>
+      </div>
+      <div class="textarea-container" v-show="!articleStore.loading">
+        <ArticleBlock :text="body" type="Body"></ArticleBlock>
+      </div>
+      <div class="tags-container" v-show="!articleStore.loading">
           <div class="tags">
             <div v-for="(tag, index) in tags" :key="index">
               {{ tag.toLocaleLowerCase() }}
@@ -187,43 +62,26 @@
             </div>
           </div>
         </div>
+        <SrcUrlBlock :url="originalUrl" v-show="!articleStore.loading"></SrcUrlBlock>
+    </section>
 
-        <div class="source-wrapper" v-show="!articleStore.loading">
-          <h3 class="header-container">Original Source</h3>
-          <a :href="originalUrl" class="url">{{ originalUrl }}</a>
-        </div>
-
-        <div class="action-bar" v-show="!articleStore.loading">
-          <button class="export-button" @click="exportText">Export</button>
-        </div>
+    <!-- RIGHT SIDEBAR -->
+    <section class="sidebar-section">
+      <div class="buttons-container">
+        <button class="btn-primary btn"><span class="material-icons publish"></span>Publish</button>
+        <button class="btn-secondary btn"><span class="material-icons send"></span>Share</button>
       </div>
-
-      <div class="title-suggestion-wrapper" v-show="!articleStore.loading">
-        <h2 id="fillerBox" class="filler"></h2>
-        <div class="regenerate-wrapper" v-show="!articleStore.loading">
-          <h3 class="header-container" v-show="!articleStore.loading">
-            Title suggestions
-          </h3>
-          <AiContent></AiContent>
-          <button
-            class="material-icons regenerate-button"
-            title="Regenerate"
-            @click="regenTitleSuggestions"
-          >
-            autorenew
-          </button>
-        </div>
-
-        <button
+      <div class="suggestions-container">
+      <div class="suggestions-label-container"><p class="sidebar-label">Headline suggestions</p><button class=" material-icons regenerate-button" title="Regenerate" @click="regenerateSuggestions">autorenew</button></div>
+      <button
           v-for="(suggestion, index) in titleSuggestions"
           :key="index"
           class="title-btn"
           @click="copyTitle(suggestion)"
         >
           {{ suggestion }}
-        </button>
-      </div>
-    </div>
+        </button></div>
+    </section>
   </main>
 </template>
 
@@ -232,6 +90,9 @@ import { useArticleStore } from '@/stores/articleStore'
 import ProgressBar from '@/components/ProgressBar.vue'
 import LoadingSpinner from '../components/LoadingSpinner.vue'
 import AiContent from '@/components/AiContent.vue'
+import ArticleBlock from '@/components/ArticleBlock.vue';
+import SrcUrlBlock from '@/components/SrcUrlBlock.vue';
+import ArticleService from '@/services/ArticleService';
 
 export default {
   setup() {
@@ -242,6 +103,8 @@ export default {
     ProgressBar,
     LoadingSpinner,
     AiContent,
+    ArticleBlock,
+    SrcUrlBlock
   },
   data() {
     return {
@@ -254,27 +117,29 @@ export default {
       isAddingTag: false,
       newTag: '',
       originalUrl: '',
+      currentStep: 3,
     }
   },
   mounted() {
-    this.titleSuggestions = [...this.articleStore.titleSuggestions]
+    //this.titleSuggestions = [...this.articleStore.titleSuggestions]
     this.tags = [...this.articleStore.tags]
     this.loadFromLocalStorage()
 
-    const leftBox = document.getElementById('titleBox');
-    const rightBox = document.getElementById('fillerBox');
+    const leftBox = document.getElementById('titleBox')
+    const rightBox = document.getElementById('fillerBox')
 
     if (leftBox && rightBox) {
-      rightBox.style.padding = `${leftBox.offsetHeight/2}px`;
-}
+      rightBox.style.padding = `${leftBox.offsetHeight / 2}px`
+    }
   },
   updated() {
-    const leftBox = document.getElementById('titleBox');
-    const rightBox = document.getElementById('fillerBox');
+    const leftBox = document.getElementById('titleBox')
+    const rightBox = document.getElementById('fillerBox')
 
     if (leftBox && rightBox) {
-      rightBox.style.padding = `${leftBox.offsetHeight/2}px`;
+      rightBox.style.padding = `${leftBox.offsetHeight / 2}px`
     }
+
   },
   computed: {
     titleWordCount(): number {
@@ -295,6 +160,9 @@ export default {
     genTitleSuggestions(): string[] {
       return this.articleStore.getTitleSuggestions
     },
+    genTitle(): string {
+      return this.articleStore.getTitle
+    },
     genEngagingText(): string {
       return this.articleStore.getEngagingText
     },
@@ -312,6 +180,9 @@ export default {
     },
   },
   methods: {
+    goBack() {
+      this.$router.go(-1)
+    },
     copyTitle(title: string) {
       this.title = title || ''
     },
@@ -332,7 +203,6 @@ export default {
       target.style.height = `${target.scrollHeight}px`
     },
     loadFromLocalStorage() {
-      this.title = localStorage.getItem('title') || ''
 
       if (localStorage.getItem('titleSuggestions') != null) {
         const savedTitleSuggestions = localStorage.getItem('titleSuggestions')
@@ -340,6 +210,8 @@ export default {
           ? JSON.parse(savedTitleSuggestions)
           : []
       }
+
+      this.title = localStorage.getItem('title') || ''
       this.engagingText = localStorage.getItem('engagingText') || ''
       this.perex = localStorage.getItem('perex') || ''
       this.body = localStorage.getItem('body') || ''
@@ -348,8 +220,8 @@ export default {
         const savedTags = localStorage.getItem('tags')
         this.tags = savedTags ? JSON.parse(savedTags) : []
       }
-      this.articleStore.selectedTopic =
-        localStorage.getItem('selectedTopic') || ''
+
+      this.articleStore.selectedTopic = localStorage.getItem('selectedTopic') || ''
       this.originalUrl = localStorage.getItem('originalUrl') || ''
     },
     exportText() {
@@ -405,17 +277,18 @@ export default {
       this.newTag = ''
       this.isAddingTag = false
     },
-    regenTitleSuggestions() {},
-    regenTitle() {},
-    regenEngagingText() {},
-    regenPerex() {},
-    regenBody() {},
-    regenTags() {},
+    async regenerateSuggestions() {
+      try {
+        const response = await ArticleService.regenerateSuggestions(this.articleStore.url, this.articleStore.articleId, this.articleStore.selectedTopic, this.articleStore.titleSuggestions)
+
+        this.titleSuggestions = response.data.title_suggestions
+      } catch(error) {
+        console.error(error)
+      }
+
+    },
   },
   watch: {
-    title(newValue) {
-      localStorage.setItem('title', newValue)
-    },
     engagingText(newValue) {
       localStorage.setItem('engagingText', newValue)
     },
@@ -430,6 +303,12 @@ export default {
     },
     titleSuggestions(newValue) {
       localStorage.setItem('titleSuggestions', JSON.stringify(newValue))
+    },
+    title(newValue) {
+      localStorage.setItem('title', newValue)
+    },
+    genTitle(newValue) {
+      this.title = newValue
     },
     genEngagingText(newValue) {
       this.engagingText = newValue
@@ -451,8 +330,105 @@ export default {
 </script>
 
 <style scoped>
-html {
-  scroll-behavior: smooth;
+
+main {
+  display: flex;
+  max-height: 90vh;
+  overflow-y: hidden;
+}
+.tags-container {
+  font-size: 12px;
+  width: 75%;
+  padding-left: 22px;
+  padding-bottom: 20px;
+}
+
+
+.sidebar-section {
+  width: 25%;
+  height: 100vh;
+  border-left: 1px solid var(--color-border);
+}
+
+.article-section {
+  width: 75%;
+  height: 90vh;
+  overflow-y: auto;
+}
+
+.article-section::-webkit-scrollbar {
+  width: 8px;
+}
+.article-section::-webkit-scrollbar-thumb {
+  background-color: var(--color-block);
+  border-radius: 3px;
+}
+
+.article-section::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.intro-box {
+  width: 96%;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  padding: 3%;
+}
+
+.suggestions-container {
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.suggestions-label-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  padding: 8px 0 0px 8px;
+  gap:8px
+}
+
+.sidebar-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* TEXTAREA */
+.textarea-container {
+  display: flex;
+  flex-direction: column;
+  width: 96%;
+  margin: auto;
+}
+
+textarea {
+  background-color: white;
+  border-radius: 5px;
+  resize: none;
+  outline: none;
+  caret-color: black;
+  padding: 10px 3%;
+  color: var(--color-text);
+  border: 0;
+}
+
+textarea:focus,
+textarea:hover {
+  background-color: var(--color-block);
+}
+
+.headline {
+  font-size: 1.75rem;
+  font-weight: 900;
+}
+
+.topic-box {
+  padding: 0px 3%;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--color-text-haze);
 }
 
 .loading-container {
@@ -467,11 +443,10 @@ html {
 }
 
 .page-wrapper {
-  margin: auto;
   display: flex;
-  width: 95%;
-  gap: 0px;
-  justify-content: flex-end;
+  width: 90%;
+  gap: 2%;
+  margin: auto;
   flex-direction: row;
   color: var(--color-text);
 }
@@ -500,48 +475,47 @@ html {
 }
 
 .title-btn {
-  width: 100%;
-  background-color: rgba(56, 56, 62, 0.75);
-  color: rgba(255, 255, 255, 0.5);
+  width: 90%;
+  background-color: var(--color-block);
+  color: var(--color-text);
   border: 0px;
   border-radius: 5px;
   padding: 8px;
   text-align: left;
   cursor: pointer;
-  margin-bottom: 10px;
+  margin: 8px 6px 2px 8px;
+  font-size: 12px;
 }
 
 .title-btn:hover {
-  background-color: rgba(76, 76, 83, 0.75);
-  color: white;
+  background-color: var(--color-block-hover);
 }
 
 .action-bar {
   display: flex;
   justify-content: flex-end;
-  margin-top: 8px;
-}
-
-.textarea-container textarea {
-  width: 100%;
-  padding-right: 40px;
-  box-sizing: border-box;
-  overflow: hidden;
-  resize: none;
+  gap: 8px;
+  margin-top: 10px;
+  margin-bottom: 80px;
 }
 
 .title-suggestion-wrapper {
   display: flex;
-  width: 30%;
+  width: 23%;
   flex-direction: column;
-  margin-top: 11.5px; /* toto potom opravit */
 }
 
 .m-title-suggestion-wrapper {
   display: none;
 }
 
+.title-suggestion-label {
+  text-wrap: nowrap;
+  overflow: hidden;
+}
+
 .regenerate-wrapper {
+  border: 0 0 0 20px solid black;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -560,17 +534,63 @@ html {
 
 .textarea-wrapper {
   display: flex;
-  width: 50%;
+  width: 60%;
   flex-direction: column;
-  margin-right: 2%;
+}
+
+/* BUTTONS */
+
+.buttons-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--color-border);
+  padding: 20px 16px;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.btn span {
+  font-size: 14px;
+}
+
+.btn-primary {
+  background-color: var(--color-accent);
+  padding: 8px 10px;
+  border: none;
+  color: var(--color-text-dark-bg);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  padding: 8px 10px;
+  border: 1px solid black;
+}
+
+
+.topic-container {
+  display: flex;
+  justify-content: center;
+  width: 75%;
+}
+
+#topicBox {
+  margin: 10px 0;
+  width: 47.5%; /* 0.95 * 50% */
 }
 
 .header-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
-  margin-top: 1%;
+  margin-top: 4px;
+  margin-bottom: 2px;
 }
 
 .word-counter {
@@ -578,17 +598,33 @@ html {
   opacity: 0.5;
 }
 
-.time-to-read {
+.time-to-read, .back-button {
   font-size: 12px;
   opacity: 0.5;
 }
 
+.back-button {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: opacity 0.3s ease;
+}
+
+.back-button:hover {
+  opacity: 1;
+}
+.back-icon {
+  background-color: var(--color-block);
+  padding: 4px;
+  border-radius: 20px;
+  font-size: 16px;
+}
 .tag-input {
   border: none;
   border-radius: 5px;
   padding-left: 1%;
-  background-color: rgba(76, 76, 83, 0.75);
-  color: white;
+  background-color: var(--color-block-hover);
   outline: none;
 }
 
@@ -598,7 +634,7 @@ html {
   justify-content: flex-start;
   white-space: nowrap;
   flex-wrap: wrap;
-  gap: 10px 10px;
+  gap: 8px 8px;
   margin-top: 1%;
   margin-bottom: 1%;
 }
@@ -624,7 +660,7 @@ html {
 }
 
 .tags div {
-  background-color: rgba(76, 76, 83, 0.75);
+  background-color: var(--color-block);
   color: var(--color-text);
   border: 0px;
   border-radius: 5px;
@@ -648,7 +684,7 @@ html {
   overflow: hidden;
   white-space: nowrap;
   color: inherit;
-  background-color: rgba(76, 76, 83, 0.75);
+  background-color: var(--color-block);
   border-radius: 5px;
   padding: 6px 8px;
 }
@@ -660,22 +696,30 @@ html {
   gap: 16px;
 }
 
-.export-button {
-  width: 15%;
-  background-color: var(--color-accent);
-  color: var(--color-text);
+.button {
   border: 0px;
   border-radius: 10px;
   font-weight: 600;
   font-size: 12px;
   padding: 10px;
   cursor: pointer;
+}
+
+.export-to-external-system {
+  background-color: #d9d9d9;
+  color: var(--color-text);
+}
+
+.export-button {
+  background-color: var(--color-accent);
+  color: var(--color-text-dark-bg);
+  border: 0px;
 
   transition: box-shadow 0.4s ease;
 }
 
 .export-button:hover {
-  box-shadow: 0 0 8px #9f00ff;
+  box-shadow: 0 0 8px var(--color-accent);
 }
 
 .title {
@@ -683,17 +727,6 @@ html {
   font-weight: bold;
   text-align: center;
   margin: auto;
-}
-
-textarea {
-  background-color: rgba(56, 56, 62, 0.75);
-  border-radius: 5px;
-  resize: none;
-  outline: none;
-  caret-color: white;
-  padding: 10px;
-  color: var(--color-text);
-  border: 2px solid rgb(84, 84, 84);
 }
 
 h3 {
@@ -715,6 +748,11 @@ h3 {
   min-height: 25em;
 }
 
+/* UTILITY */
+.bold {
+  font-weight: bold;
+}
+
 @media (max-width: 480px) {
   .title-suggestion-wrapper {
     display: none;
@@ -733,6 +771,12 @@ h3 {
 
   .m-title-suggestion-wrapper {
     display: block;
+  }
+
+  #topicBox {
+    width: 90%;
+    padding-right: 0;
+    text-wrap: pretty;
   }
 }
 </style>

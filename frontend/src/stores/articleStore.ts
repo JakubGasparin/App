@@ -11,11 +11,15 @@ export const useArticleStore = defineStore('article', {
     perex: "" as string,
     body: "" as string,
     url: "" as string,
+    articleId: 0,
     loading: false,
   }),
   getters: {
     getTitleSuggestions(): string[] {
       return this.titleSuggestions;
+    },
+    getTitle(): string {
+      return this.title;
     },
     getEngagingText(): string {
       return this.engagingText;
@@ -35,12 +39,13 @@ export const useArticleStore = defineStore('article', {
       try {
         this.loading = true;
         const response = await ArticleService.article(this.url, this.selectedTopic)
-        this.titleSuggestions = response.data.headlines;
-        this.engagingText = response.data.engaging_text;
-        this.perex = response.data.perex;
-        this.body = response.data.article;
-        this.tags = response.data.tags;
-
+        this.titleSuggestions = response.data.article.headlines;
+        this.title = response.data.article.headlines[0];
+        this.engagingText = response.data.article.engaging_text;
+        this.perex = response.data.article.perex;
+        this.body = response.data.article.article;
+        this.tags = response.data.article.tags;
+        this.articleId = response.data.id;
       } catch (error) {
         console.error(error)
       } finally {
